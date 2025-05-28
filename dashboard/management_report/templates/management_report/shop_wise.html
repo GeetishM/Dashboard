@@ -1,0 +1,148 @@
+{% extends "management_report/base.html" %}
+
+{% block title %}Shop-Wise Budget{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex align-items-center mb-4">
+    <img src="https://img.icons8.com/color/48/000000/shop.png" alt="Shop Icon" class="me-2"/>
+    <h2 class="mb-0 fw-bold text-success">Budget Analysis Shop-Wise</h2>
+  </div>
+
+  <!-- Tab Navigation -->
+  <ul class="nav nav-tabs mb-3" id="viewTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="tabular-tab" data-bs-toggle="tab" data-bs-target="#tabularView" type="button" role="tab" aria-controls="tabularView" aria-selected="true">
+        <i class="bi bi-table"></i> Tabular
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="graphical-tab" data-bs-toggle="tab" data-bs-target="#graphicalView" type="button" role="tab" aria-controls="graphicalView" aria-selected="false">
+        <i class="bi bi-bar-chart"></i> Graphical
+      </button>
+    </li>
+  </ul>
+
+  <!-- Year Filter Dropdown -->
+  <div class="mb-3">
+    <label for="yearFilter" class="form-label"><strong>Filter by Year:</strong></label>
+    <select id="yearFilter" class="form-select d-inline-block" style="width: 200px;">
+      <option value="all" selected>All</option>
+      {% for year in year_list %}
+      <option value="{{ year }}">{{ year }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="tab-content">
+    <!-- Tabular View -->
+    <div class="tab-pane fade show active" id="tabularView" role="tabpanel" aria-labelledby="tabular-tab">
+      <div class="table-responsive shadow rounded" style="max-height: 600px; overflow-y: auto;">
+        <table class="table table-bordered table-hover align-middle text-center mb-0" id="shopBudgetTable">
+          <thead class="table-success sticky-top">
+            <tr>
+              <th>Year</th>
+              <th>Shop</th>
+              <th>Budget</th>
+              <th>Open Item</th>
+              <th>Invoice</th>
+              <th>Available Budget</th>
+            </tr>
+          </thead>
+          <tbody id="lazyTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Graphical View -->
+    <div class="tab-pane fade" id="graphicalView" role="tabpanel" aria-labelledby="graphical-tab">
+      <div class="card shadow rounded p-5 d-flex align-items-center justify-content-center" style="min-height:300px;">
+        <span class="text-muted fs-4">Graphical Area (Coming Soon)</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{ data|json_script:"budgetData" }}
+
+<!-- Bootstrap Icons CDN (for tab icons) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<style>
+  .table th, .table td {
+    vertical-align: middle;
+  }
+  .form-select {
+    border-radius: 6px;
+    padding: 5px 10px;
+    border: 1px solid #81c784;
+    background-color: #f1f8e9;
+  }
+  .nav-tabs .nav-link.active {
+    background-color: #81c784 !important;
+    color: #fff !important;
+    border-color: #81c784 #81c784 #fff !important;
+  }
+  .nav-tabs .nav-link {
+    color: #388e3c;
+    font-weight: 500;
+  }
+  .table-hover tbody tr:hover {
+    background-color: #f0f4c3;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const allRowsData = JSON.parse(document.getElementById('budgetData').textContent);
+    const yearFilter = document.getElementById('yearFilter');
+    const tbody = document.getElementById('lazyTableBody');
+    let filteredRows = allRowsData;
+    const chunkSize = 50;
+    let currentIndex = 0;
+
+    function renderChunk() {
+      const fragment = document.createDocumentFragment();
+      const chunk = filteredRows.slice(currentIndex, currentIndex + chunkSize);
+      chunk.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${row.gjahr}</td>
+          <td>${row.shop}</td>
+          <td class="text-end">${row.budget.toFixed(2)}</td>
+          <td class="text-end">${row.opitems.toFixed(2)}</td>
+          <td class="text-end">${row.invoice.toFixed(2)}</td>
+          <td class="text-end">${row.av_budget.toFixed(2)}</td>
+        `;
+        fragment.appendChild(tr);
+      });
+      tbody.appendChild(fragment);
+      currentIndex += chunkSize;
+    }
+
+    function resetAndRender(year) {
+      tbody.innerHTML = '';
+      currentIndex = 0;
+      filteredRows = (year === "all") 
+        ? allRowsData 
+        : allRowsData.filter(row => row.gjahr == year);
+      renderChunk();
+    }
+
+    // Initial load
+    resetAndRender(yearFilter.value);
+
+    // Filter change
+    yearFilter.addEventListener('change', function () {
+      resetAndRender(this.value);
+    });
+
+    // Scroll lazy loading
+    document.querySelector('.table-responsive').addEventListener('scroll', function () {
+      const nearBottom = this.scrollTop + this.clientHeight >= this.scrollHeight - 10;
+      if (nearBottom && currentIndex < filteredRows.length) {
+        renderChunk();
+      }
+    });
+  });
+</script>
+{% endblock %}
