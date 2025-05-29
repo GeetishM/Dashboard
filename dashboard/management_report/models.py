@@ -22,3 +22,4 @@ class BudgetData(models.Model):
     class Meta:
         managed = False  # Don't create/migrate this table
         db_table = 'zedw_budget_dash_v'
+

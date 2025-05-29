@@ -4,7 +4,7 @@
 {% block content %}
 <div class="container py-4">
     <div class="d-flex align-items-center mb-4">
-        <img src="https://img.icons8.com/color/48/000000/money-bag.png" alt="Fund Icon" class="me-2" />
+        <img src="https://img.icons8.com/color/48/000000/funds.png" alt="Fund Icon" class="me-2" />
         <h2 class="mb-0 fw-bold text-success">Budget Analysis Fund-Wise</h2>
     </div>
 
@@ -42,13 +42,13 @@
                 <table class="table table-bordered table-hover align-middle text-center mb-0" id="fundBudgetTable">
                     <thead class="table-success sticky-top">
                         <tr>
-                            <th data-sort="CITEM" class="sortable">CITEM <span class="sort-indicator"></span></th>
-                            <th data-sort="BUDGET" class="sortable">Budget <span class="sort-indicator"></span></th>
-                            <th data-sort="OPITEMS" class="sortable">Open Item <span class="sort-indicator"></span></th>
-                            <th data-sort="INVOICE" class="sortable">Invoice <span class="sort-indicator"></span></th>
-                            <th data-sort="AV_BUDGET" class="sortable">Available Budget <span
-                                    class="sort-indicator"></span></th>
-                            <th data-sort="GJAHR" class="sortable">Year <span class="sort-indicator"></span></th>
+                            <th data-sort="fonds" class="sortable">FOND <span class="sort-indicator"></span></th>
+                            <th data-sort="budget" class="sortable">Budget <span class="sort-indicator"></span></th>
+                            <th data-sort="opitems" class="sortable">Open Item <span class="sort-indicator"></span></th>
+                            <th data-sort="invoice" class="sortable">Invoice <span class="sort-indicator"></span></th>
+                            <th data-sort="av_budget" class="sortable">Available Budget <span class="sort-indicator"></span>
+                            </th>
+                            <th data-sort="gjahr" class="sortable">Year <span class="sort-indicator"></span></th>
                         </tr>
                     </thead>
                     <tbody id="lazyTableBody"></tbody>
@@ -118,7 +118,7 @@
         let filteredRows = allRowsData;
         const chunkSize = 50;
         let currentIndex = 0;
-        let sortColumn = "CITEM";
+        let sortColumn = "fonds";
         let sortAsc = true;
 
         function compare(a, b, col, asc) {
@@ -135,7 +135,7 @@
             chunk.forEach(row => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-      <td>${row.citem}</td>
+      <td>${row.fonds}</td>
       <td class="text-end">${row.budget.toFixed(2)}</td>
       <td class="text-end">${row.opitems.toFixed(2)}</td>
       <td class="text-end">${row.invoice.toFixed(2)}</td>
@@ -153,7 +153,7 @@
             currentIndex = 0;
             filteredRows = (year === "all")
                 ? allRowsData.slice()
-                : allRowsData.filter(row => row.gjahr == year); // <-- lowercase!
+                : allRowsData.filter(row => row.gjahr == year);
             filteredRows.sort((a, b) => compare(a, b, sortColumn, sortAsc));
             renderChunk();
         }
@@ -176,7 +176,7 @@
         });
 
         // Initial sort indicator
-        table.querySelector('th[data-sort="CITEM"] .sort-indicator').textContent = '▲';
+        table.querySelector('th[data-sort="fonds"] .sort-indicator').textContent = '▲';
 
         // Initial load
         resetAndRender(yearFilter.value);

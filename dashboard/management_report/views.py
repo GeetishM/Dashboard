@@ -11,11 +11,11 @@ def shop_wise_budget(request):
     return render(request, 'management_report/shop_wise.html', {'data': data})
 
 def fund_wise(request):
-    data = BudgetData.objects.all()
-    return render(request, 'management_report/fund_wise.html', {'data': data})
+    return render(request, 'management_report/fund_wise.html',{'data': data})
 
 def commitment_item_wise(request):
-    return render(request, 'management_report/commitment_item_wise.html')
+    data = BudgetData.objects.all()
+    return render(request, 'management_report/commitment_item_wise.html', {'data': data})
 
 
 # --- Purchase Status Views ---
@@ -51,7 +51,7 @@ def shop_wise_budget(request):
 
     # Convert queryset to list of dictionaries for JSON serialization
     data = list(queryset.values(
-        'gjahr', 'shop', 'budget', 'opitems', 'invoice', 'av_budget'
+        'shop', 'budget', 'opitems', 'invoice', 'av_budget', 'gjahr'
     ))
 
     return render(request, 'management_report/shop_wise.html', {
@@ -59,13 +59,27 @@ def shop_wise_budget(request):
         'year_list': year_list,
     })
 
-def fund_wise(request):
+def commitment_item_wise(request):
     queryset = BudgetData.objects.all().order_by('gjahr', 'citem')
     year_list = sorted(set(queryset.values_list('gjahr', flat=True)))
 
     # Convert queryset to list of dictionaries for JSON serialization
     data = list(queryset.values(
         'citem', 'budget', 'opitems', 'invoice', 'av_budget', 'gjahr'
+    ))
+
+    return render(request, 'management_report/commitment_item_wise.html', {
+        'data': data,
+        'year_list': year_list,
+    })
+
+def fund_wise(request):
+    queryset = BudgetData.objects.all().order_by('gjahr', 'fonds')
+    year_list = sorted(set(queryset.values_list('gjahr', flat=True)))
+
+    # Convert queryset to list of dictionaries for JSON serialization
+    data = list(queryset.values(
+        'fonds', 'budget', 'opitems', 'invoice', 'av_budget', 'gjahr'
     ))
 
     return render(request, 'management_report/fund_wise.html', {
