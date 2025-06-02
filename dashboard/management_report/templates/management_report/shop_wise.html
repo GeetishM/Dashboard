@@ -10,35 +10,33 @@
   </div>
 
   <!-- Tab Navigation -->
-  <ul class="nav nav-tabs mb-3" id="viewTabs" role="tablist">
+  <ul class="nav nav-tabs mb-3" id="shopTabs" role="tablist">
     <li class="nav-item" role="presentation">
-      <button class="nav-link active" id="tabular-tab" data-bs-toggle="tab" data-bs-target="#tabularView" type="button" role="tab" aria-controls="tabularView" aria-selected="true">
-        <i class="bi bi-table"></i> Tabular
+      <button class="nav-link active" id="main-tab" data-bs-toggle="tab" data-bs-target="#mainTab" type="button" role="tab" aria-controls="mainTab" aria-selected="true">
+      FUND MAIN: STORE-SPARES
       </button>
     </li>
     <li class="nav-item" role="presentation">
-      <button class="nav-link" id="graphical-tab" data-bs-toggle="tab" data-bs-target="#graphicalView" type="button" role="tab" aria-controls="graphicalView" aria-selected="false">
-        <i class="bi bi-bar-chart"></i> Graphical
+      <button class="nav-link" id="other-tab" data-bs-toggle="tab" data-bs-target="#otherTab" type="button" role="tab" aria-controls="otherTab" aria-selected="false">
+       FUND MAIN: Other Services
       </button>
     </li>
   </ul>
 
-  <!-- Year Filter Dropdown -->
-  <div class="mb-3">
-    <label for="yearFilter" class="form-label"><strong>Filter by Year:</strong></label>
-    <select id="yearFilter" class="form-select d-inline-block" style="width: 200px;">
-      <option value="all" selected>All</option>
-      {% for year in year_list %}
-      <option value="{{ year }}">{{ year }}</option>
-      {% endfor %}
-    </select>
-  </div>
-
   <div class="tab-content">
-    <!-- Tabular View -->
-    <div class="tab-pane fade show active" id="tabularView" role="tabpanel" aria-labelledby="tabular-tab">
+    <!-- Store-Spares Tab -->
+    <div class="tab-pane fade show active" id="mainTab" role="tabpanel" aria-labelledby="main-tab">
+      <div class="mb-3">
+        <label for="yearFilterMain" class="form-label"><strong>Filter by Year:</strong></label>
+        <select id="yearFilterMain" class="form-select d-inline-block" style="width: 200px;">
+          <option value="all" selected>All</option>
+          {% for year in year_list_main %}
+          <option value="{{ year }}">{{ year }}</option>
+          {% endfor %}
+        </select>
+      </div>
       <div class="table-responsive shadow rounded" style="max-height: 600px; overflow-y: auto;">
-        <table class="table table-bordered table-hover align-middle text-center mb-0" id="shopBudgetTable">
+        <table class="table table-bordered table-hover align-middle text-center mb-0" id="shopBudgetTableMain">
           <thead class="table-success sticky-top">
             <tr>
               <th>Shop</th>
@@ -49,20 +47,42 @@
               <th>Year</th>
             </tr>
           </thead>
-          <tbody id="lazyTableBody"></tbody>
+          <tbody id="lazyTableBodyMain"></tbody>
         </table>
       </div>
     </div>
-    <!-- Graphical View -->
-    <div class="tab-pane fade" id="graphicalView" role="tabpanel" aria-labelledby="graphical-tab">
-      <div class="card shadow rounded p-5 d-flex align-items-center justify-content-center" style="min-height:300px;">
-        <span class="text-muted fs-4">Graphical Area (Coming Soon)</span>
+    <!-- Other Services Tab -->
+    <div class="tab-pane fade" id="otherTab" role="tabpanel" aria-labelledby="other-tab">
+      <div class="mb-3">
+        <label for="yearFilterOther" class="form-label"><strong>Filter by Year:</strong></label>
+        <select id="yearFilterOther" class="form-select d-inline-block" style="width: 200px;">
+          <option value="all" selected>All</option>
+          {% for year in year_list_other %}
+          <option value="{{ year }}">{{ year }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="table-responsive shadow rounded" style="max-height: 600px; overflow-y: auto;">
+        <table class="table table-bordered table-hover align-middle text-center mb-0" id="shopBudgetTableOther">
+          <thead class="table-info sticky-top">
+            <tr>
+              <th>Shop</th>
+              <th>Budget</th>
+              <th>Open Item</th>
+              <th>Invoice</th>
+              <th>Available Budget</th>
+              <th>Year</th>
+            </tr>
+          </thead>
+          <tbody id="lazyTableBodyOther"></tbody>
+        </table>
       </div>
     </div>
   </div>
 </div>
 
-{{ data|json_script:"budgetData" }}
+{{ data_main|json_script:"budgetDataMain" }}
+{{ data_other|json_script:"budgetDataOther" }}
 
 <!-- Bootstrap Icons CDN (for tab icons) -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
@@ -92,17 +112,19 @@
 </style>
 
 <script>
+  // Store-Spares Table
   document.addEventListener("DOMContentLoaded", function () {
-    const allRowsData = JSON.parse(document.getElementById('budgetData').textContent);
-    const yearFilter = document.getElementById('yearFilter');
-    const tbody = document.getElementById('lazyTableBody');
-    let filteredRows = allRowsData;
+    // MAIN: Store-Spares
+    const allRowsDataMain = JSON.parse(document.getElementById('budgetDataMain').textContent);
+    const yearFilterMain = document.getElementById('yearFilterMain');
+    const tbodyMain = document.getElementById('lazyTableBodyMain');
+    let filteredRowsMain = allRowsDataMain;
     const chunkSize = 50;
-    let currentIndex = 0;
+    let currentIndexMain = 0;
 
-    function renderChunk() {
+    function renderChunkMain() {
       const fragment = document.createDocumentFragment();
-      const chunk = filteredRows.slice(currentIndex, currentIndex + chunkSize);
+      const chunk = filteredRowsMain.slice(currentIndexMain, currentIndexMain + chunkSize);
       chunk.forEach(row => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -115,32 +137,83 @@
         `;
         fragment.appendChild(tr);
       });
-      tbody.appendChild(fragment);
-      currentIndex += chunkSize;
+      tbodyMain.appendChild(fragment);
+      currentIndexMain += chunkSize;
     }
 
-    function resetAndRender(year) {
-      tbody.innerHTML = '';
-      currentIndex = 0;
-      filteredRows = (year === "all") 
-        ? allRowsData 
-        : allRowsData.filter(row => row.gjahr == year);
-      renderChunk();
+    function resetAndRenderMain(year) {
+      tbodyMain.innerHTML = '';
+      currentIndexMain = 0;
+      filteredRowsMain = (year === "all") 
+        ? allRowsDataMain 
+        : allRowsDataMain.filter(row => row.gjahr == year);
+      renderChunkMain();
     }
 
     // Initial load
-    resetAndRender(yearFilter.value);
+    resetAndRenderMain(yearFilterMain.value);
 
     // Filter change
-    yearFilter.addEventListener('change', function () {
-      resetAndRender(this.value);
+    yearFilterMain.addEventListener('change', function () {
+      resetAndRenderMain(this.value);
     });
 
     // Scroll lazy loading
-    document.querySelector('.table-responsive').addEventListener('scroll', function () {
+    document.querySelector('#mainTab .table-responsive').addEventListener('scroll', function () {
       const nearBottom = this.scrollTop + this.clientHeight >= this.scrollHeight - 10;
-      if (nearBottom && currentIndex < filteredRows.length) {
-        renderChunk();
+      if (nearBottom && currentIndexMain < filteredRowsMain.length) {
+        renderChunkMain();
+      }
+    });
+
+    // MAIN: Other Services
+    const allRowsDataOther = JSON.parse(document.getElementById('budgetDataOther').textContent);
+    const yearFilterOther = document.getElementById('yearFilterOther');
+    const tbodyOther = document.getElementById('lazyTableBodyOther');
+    let filteredRowsOther = allRowsDataOther;
+    let currentIndexOther = 0;
+
+    function renderChunkOther() {
+      const fragment = document.createDocumentFragment();
+      const chunk = filteredRowsOther.slice(currentIndexOther, currentIndexOther + chunkSize);
+      chunk.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${row.shop}</td>
+          <td class="text-end">${row.budget.toFixed(2)}</td>
+          <td class="text-end">${row.opitems.toFixed(2)}</td>
+          <td class="text-end">${row.invoice.toFixed(2)}</td>
+          <td class="text-end">${row.av_budget.toFixed(2)}</td>
+          <td>${row.gjahr}</td>
+        `;
+        fragment.appendChild(tr);
+      });
+      tbodyOther.appendChild(fragment);
+      currentIndexOther += chunkSize;
+    }
+
+    function resetAndRenderOther(year) {
+      tbodyOther.innerHTML = '';
+      currentIndexOther = 0;
+      filteredRowsOther = (year === "all") 
+        ? allRowsDataOther 
+        : allRowsDataOther.filter(row => row.gjahr == year);
+      renderChunkOther();
+    }
+
+    // Initial load
+    resetAndRenderOther(yearFilterOther.value);
+
+    // Filter change
+    yearFilterOther.addEventListener('change', function () {
+      resetAndRenderOther(this.value);
+    });
+
+    // Scroll lazy loading
+    document.querySelector('#otherTab .table-responsive').addEventListener('scroll', function () {
+      const nearBottom = this.scrollTop + this.clientHeight >= this.scrollHeight - 10;
+      if (nearBottom && currentIndexOther < filteredRowsOther.length) {
+        renderChunkOther();
       }
     });
   });

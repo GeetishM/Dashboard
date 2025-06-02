@@ -7,14 +7,41 @@ def home(request):
 # --- Budget Analysis Views ---
 
 def shop_wise_budget(request):
-    queryset = BudgetData.objects.all().order_by('gjahr', 'shop')
-    year_list = sorted(set(queryset.values_list('gjahr', flat=True)))
-    data = list(queryset.values(
-        'shop', 'budget', 'opitems', 'invoice', 'av_budget', 'gjahr'
-    ))
+    # Main: Store-Spares
+    queryset_main = (
+        BudgetData.objects
+        .order_by('gjahr', 'shop')
+        .values('shop', 'budget', 'opitems', 'invoice', 'av_budget', 'gjahr')
+        .distinct()
+    )
+    data_main = [
+        row for row in queryset_main
+        if row['shop'] and (
+            row['budget'] or row['opitems'] or row['invoice'] or row['av_budget']
+        )
+    ]
+    year_list_main = sorted(set(row['gjahr'] for row in data_main))
+
+    # Main: Other Services
+    queryset_other = (
+        BudgetDataOther.objects
+        .order_by('gjahr', 'shop')
+        .values('shop', 'budget', 'opitems', 'invoice', 'av_budget', 'gjahr')
+        .distinct()
+    )
+    data_other = [
+        row for row in queryset_other
+        if row['shop'] and (
+            row['budget'] or row['opitems'] or row['invoice'] or row['av_budget']
+        )
+    ]
+    year_list_other = sorted(set(row['gjahr'] for row in data_other))
+
     return render(request, 'management_report/shop_wise.html', {
-        'data': data,
-        'year_list': year_list,
+        'data_main': data_main,
+        'year_list_main': year_list_main,
+        'data_other': data_other,
+        'year_list_other': year_list_other,
     })
 
 def fund_wise(request):
@@ -95,7 +122,29 @@ def po_dp_next_30_days(request):
     })
 
 def po_dp_expired(request):
-    return render(request, 'management_report/po_dp_expired.html')
+    queryset = (
+        PendPoStatusLive.objects
+        .exclude(pur_grp_grp__isnull=True)
+        .exclude(pur_grp_grp__exact='')
+        .order_by('pur_grp_grp')
+        .values('pur_grp_grp')
+        .distinct()
+    )
+    data = []
+    for row in queryset:
+        # Get the first item_value for each pur_grp_grp (or aggregate as needed)
+        item = (
+            PendPoStatusLive.objects
+            .filter(pur_grp_grp=row['pur_grp_grp'])
+            .first()
+        )
+        data.append({
+            'pur_grp_grp': row['pur_grp_grp'],
+            'item_value': item.item_value if item and item.item_value else 0,
+        })
+    return render(request, 'management_report/po_dp_expired.html', {
+        'data': data,
+    })
 
 # --- Reports ---
 
