@@ -41,12 +41,12 @@
         <table class="table table-bordered table-hover align-middle text-center mb-0" id="shopBudgetTable">
           <thead class="table-success sticky-top">
             <tr>
-              <th>Year</th>
               <th>Shop</th>
               <th>Budget</th>
               <th>Open Item</th>
               <th>Invoice</th>
               <th>Available Budget</th>
+              <th>Year</th>
             </tr>
           </thead>
           <tbody id="lazyTableBody"></tbody>
@@ -106,12 +106,12 @@
       chunk.forEach(row => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>${row.gjahr}</td>
           <td>${row.shop}</td>
           <td class="text-end">${row.budget.toFixed(2)}</td>
           <td class="text-end">${row.opitems.toFixed(2)}</td>
           <td class="text-end">${row.invoice.toFixed(2)}</td>
           <td class="text-end">${row.av_budget.toFixed(2)}</td>
+          <td>${row.gjahr}</td>
         `;
         fragment.appendChild(tr);
       });
