@@ -7,42 +7,34 @@ def home(request):
 # --- Budget Analysis Views ---
 
 def shop_wise_budget(request):
-    # Main: Store-Spares
-    queryset_main = (
-        BudgetData.objects
-        .order_by('gjahr', 'shop')
-        .values('shop', 'budget', 'opitems', 'invoice', 'av_budget', 'gjahr')
-        .distinct()
+    # Fetch STORE-SPARES data and add type
+    store_spares = BudgetData.objects.all().values(
+        'fonds', 'shop', 'budget', 'opitems', 'invoice', 'av_budget', 'gjahr'
     )
-    data_main = [
-        row for row in queryset_main
-        if row['shop'] and (
-            row['budget'] or row['opitems'] or row['invoice'] or row['av_budget']
-        )
+    store_spares = [
+        {**row, 'type': 'STORE-SPARES'} for row in store_spares
     ]
-    year_list_main = sorted(set(row['gjahr'] for row in data_main))
 
-    # Main: Other Services
-    queryset_other = (
-        BudgetDataOther.objects
-        .order_by('gjahr', 'shop')
-        .values('shop', 'budget', 'opitems', 'invoice', 'av_budget', 'gjahr')
-        .distinct()
+    # Fetch OTHER-SERVICES data and add type
+    other_services = BudgetDataOther.objects.all().values(
+        'fonds', 'shop', 'budget', 'opitems', 'invoice', 'av_budget', 'gjahr'
     )
-    data_other = [
-        row for row in queryset_other
-        if row['shop'] and (
-            row['budget'] or row['opitems'] or row['invoice'] or row['av_budget']
-        )
+    other_services = [
+        {**row, 'type': 'OTHER-SERVICES'} for row in other_services
     ]
-    year_list_other = sorted(set(row['gjahr'] for row in data_other))
 
-    return render(request, 'management_report/shop_wise.html', {
-        'data_main': data_main,
-        'year_list_main': year_list_main,
-        'data_other': data_other,
-        'year_list_other': year_list_other,
-    })
+    # Merge both lists
+    budget_data = list(store_spares) + list(other_services)
+
+    # Get unique years for the filter dropdown
+    years = set(row['gjahr'] for row in budget_data)
+    year_list = sorted(years)
+
+    context = {
+        'budget_data': budget_data,
+        'year_list': year_list,
+    }
+    return render(request, 'management_report/shop_wise.html', context)
 
 def fund_wise(request):
     queryset = BudgetData.objects.all().order_by('gjahr', 'fonds')
