@@ -7,6 +7,23 @@
     <h2 class="mb-0 fw-bold text-success">Budget Analysis Shop-Wise</h2>
   </div>
 
+  <!-- Tabs Navigation -->
+  <ul class="nav nav-tabs mb-3" id="viewTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="tabular-tab" data-bs-toggle="tab" data-bs-target="#tabularView" type="button"
+        role="tab" aria-controls="tabularView" aria-selected="true">
+        <i class="bi bi-table"></i> Tabular
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="graphical-tab" data-bs-toggle="tab" data-bs-target="#graphicalView" type="button"
+        role="tab" aria-controls="graphicalView" aria-selected="false">
+        <i class="bi bi-bar-chart"></i> Graphical
+      </button>
+    </li>
+  </ul>
+
+
   <!-- Filter Controls -->
   <div class="row mb-4">
     <div class="col-md-2">
@@ -47,21 +64,6 @@
     </div>
   </div>
 
-  <!-- Tabs Navigation -->
-  <ul class="nav nav-tabs mb-3" id="viewTabs" role="tablist">
-    <li class="nav-item" role="presentation">
-      <button class="nav-link active" id="tabular-tab" data-bs-toggle="tab" data-bs-target="#tabularView"
-        type="button" role="tab" aria-controls="tabularView" aria-selected="true">
-        <i class="bi bi-table"></i> Tabular
-      </button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="graphical-tab" data-bs-toggle="tab" data-bs-target="#graphicalView"
-        type="button" role="tab" aria-controls="graphicalView" aria-selected="false">
-        <i class="bi bi-bar-chart"></i> Graphical
-      </button>
-    </li>
-  </ul>
 
   <div class="tab-content">
     <!-- Tabular View -->
@@ -111,80 +113,98 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-  .table th, .table td {
+  .table th,
+  .table td {
     vertical-align: middle;
   }
+
   .form-select {
     border-radius: 6px;
     padding: 5px 10px;
     border: 1px solid #81c784;
     background-color: #f1f8e9;
   }
+
   .nav-tabs .nav-link.active {
     background-color: #81c784 !important;
     color: #fff !important;
     border-color: #81c784 #81c784 #fff !important;
   }
+
   .nav-tabs .nav-link {
     color: #388e3c;
     font-weight: 500;
   }
+
   .table-hover tbody tr:hover {
     background-color: #dcedc8 !important;
   }
+
   .sortable {
     cursor: pointer;
     user-select: none;
   }
+
   .sort-indicator {
     font-size: 0.9em;
     margin-left: 2px;
   }
+
   .table-responsive {
     scrollbar-width: thin;
     scrollbar-color: #81c784 #f1f8e9;
   }
+
   .table-responsive::-webkit-scrollbar {
     width: 10px;
     background: #f1f8e9;
     border-radius: 8px;
   }
+
   .table-responsive::-webkit-scrollbar-thumb {
     background: #81c784;
     border-radius: 8px;
     border: 2px solid #f1f8e9;
   }
+
   .table-responsive::-webkit-scrollbar-thumb:hover {
     background: #388e3c;
   }
+
   .form-select {
     scrollbar-width: thin;
     scrollbar-color: #81c784 #f1f8e9;
   }
+
   .form-select::-webkit-scrollbar {
     width: 8px;
     background: #f1f8e9;
     border-radius: 8px;
   }
+
   .form-select::-webkit-scrollbar-thumb {
     background: #81c784;
     border-radius: 8px;
     border: 2px solid #f1f8e9;
   }
+
   .form-select::-webkit-scrollbar-thumb:hover {
     background: #388e3c;
   }
+
   select.form-select option:hover,
   select.form-select option:checked {
     background: #f0f4c3 !important;
     color: #388e3c !important;
   }
+
   #shopBarChart {
     width: 100% !important;
     height: 100% !important;
     display: block;
   }
-  .card > #shopBarChart {
+
+  .card>#shopBarChart {
     flex: 1 1 auto;
   }
 </style>
@@ -261,10 +281,10 @@
           tInvoice += Number(row.invoice) || 0;
           tAvBudget += Number(row.av_budget) || 0;
         });
-        totalBudget.textContent = tBudget.toLocaleString(undefined, {maximumFractionDigits:2});
-        totalOpitems.textContent = tOpitems.toLocaleString(undefined, {maximumFractionDigits:2});
-        totalInvoice.textContent = tInvoice.toLocaleString(undefined, {maximumFractionDigits:2});
-        totalAvBudget.textContent = tAvBudget.toLocaleString(undefined, {maximumFractionDigits:2});
+        totalBudget.textContent = tBudget.toLocaleString(undefined, { maximumFractionDigits: 2 });
+        totalOpitems.textContent = tOpitems.toLocaleString(undefined, { maximumFractionDigits: 2 });
+        totalInvoice.textContent = tInvoice.toLocaleString(undefined, { maximumFractionDigits: 2 });
+        totalAvBudget.textContent = tAvBudget.toLocaleString(undefined, { maximumFractionDigits: 2 });
         totalsRow.style.display = '';
       } else {
         totalsRow.style.display = 'none';
@@ -336,7 +356,7 @@
             tooltip: {
               enabled: true,
               callbacks: {
-                label: function(context) {
+                label: function (context) {
                   return context.dataset.label + ': ' + context.parsed.y.toFixed(2);
                 }
               }
