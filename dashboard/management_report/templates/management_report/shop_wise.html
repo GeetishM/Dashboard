@@ -4,48 +4,38 @@
 {% block content %}
 <div class="container py-4">
   <div class="d-flex align-items-center mb-4">
-    <img src="https://img.icons8.com/color/48/000000/shop.png" alt="Shop Icon" class="me-2"/>
     <h2 class="mb-0 fw-bold text-success">Budget Analysis Shop-Wise</h2>
   </div>
 
-  <!-- Tab Navigation -->
+  <!-- Tabs Navigation -->
   <ul class="nav nav-tabs mb-3" id="viewTabs" role="tablist">
     <li class="nav-item" role="presentation">
-      <button class="nav-link active" id="tabular-tab" data-bs-toggle="tab" data-bs-target="#tabularView"
-        type="button" role="tab" aria-controls="tabularView" aria-selected="true">
+      <button class="nav-link active" id="tabular-tab" data-bs-toggle="tab" data-bs-target="#tabularView" type="button"
+        role="tab" aria-controls="tabularView" aria-selected="true">
         <i class="bi bi-table"></i> Tabular
       </button>
     </li>
     <li class="nav-item" role="presentation">
-      <button class="nav-link" id="graphical-tab" data-bs-toggle="tab" data-bs-target="#graphicalView"
-        type="button" role="tab" aria-controls="graphicalView" aria-selected="false">
+      <button class="nav-link" id="graphical-tab" data-bs-toggle="tab" data-bs-target="#graphicalView" type="button"
+        role="tab" aria-controls="graphicalView" aria-selected="false">
         <i class="bi bi-bar-chart"></i> Graphical
       </button>
     </li>
   </ul>
 
+
   <!-- Filter Controls -->
   <div class="row mb-4">
-    <div class="col-md-3">
+    <div class="col-md-2">
       <label for="fundFilter" class="form-label"><strong>FUND:</strong></label>
       <select id="fundFilter" class="form-select">
         <option value="all" selected>All</option>
-        <option value="MAIN">MAIN</option>
-        <option value="CRC">CRC</option>
-        <option value="CS">CS</option>
-        <option value="HSCL">HSCL</option>
-        <option value="SP">SP</option>
+        {% for fund in fund_list %}
+        <option value="{{ fund }}">{{ fund }}</option>
+        {% endfor %}
       </select>
     </div>
-    <div class="col-md-3">
-      <label for="typeFilter" class="form-label"><strong>TYPE:</strong></label>
-      <select id="typeFilter" class="form-select">
-        <option value="all" selected>All</option>
-        <option value="STORE-SPARES">STORE-SPARES</option>
-        <option value="OTHER-SERVICES">OTHER-SERVICES</option>
-      </select>
-    </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
       <label for="yearFilter" class="form-label"><strong>Year:</strong></label>
       <select id="yearFilter" class="form-select">
         <option value="all" selected>All</option>
@@ -54,8 +44,27 @@
         {% endfor %}
       </select>
     </div>
+    <div class="col-md-3">
+      <label for="citemFilter" class="form-label"><strong>CITEM:</strong></label>
+      <select id="citemFilter" class="form-select">
+        <option value="all" selected>All</option>
+        {% for citem in citem_list %}
+        <option value="{{ citem }}">{{ citem }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label for="shopFilter" class="form-label"><strong>Shop:</strong></label>
+      <select id="shopFilter" class="form-select">
+        <option value="all" selected>All</option>
+        {% for shop in shop_list %}
+        <option value="{{ shop }}">{{ shop }}</option>
+        {% endfor %}
+      </select>
+    </div>
   </div>
- 
+
+
   <div class="tab-content">
     <!-- Tabular View -->
     <div class="tab-pane fade show active" id="tabularView" role="tabpanel" aria-labelledby="tabular-tab">
@@ -72,9 +81,20 @@
             </tr>
           </thead>
           <tbody id="lazyTableBody"></tbody>
+          <tfoot id="totalsRow" style="display:none;">
+            <tr class="table-warning fw-bold">
+              <td>Total</td>
+              <td id="totalBudget"></td>
+              <td id="totalOpitems"></td>
+              <td id="totalInvoice"></td>
+              <td id="totalAvBudget"></td>
+              <td></td>
+            </tr>
+          </tfoot>
         </table>
       </div>
     </div>
+
     <!-- Graphical View -->
     <div class="tab-pane fade" id="graphicalView" role="tabpanel" aria-labelledby="graphical-tab">
       <div class="card shadow rounded p-0 d-flex align-items-stretch justify-content-stretch"
@@ -89,46 +109,102 @@
 
 <!-- Bootstrap Icons CDN (for tab icons) -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-
-<!-- Add Chart.js CDN here -->
+<!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-  .table th, .table td {
+  .table th,
+  .table td {
     vertical-align: middle;
   }
+
   .form-select {
     border-radius: 6px;
     padding: 5px 10px;
     border: 1px solid #81c784;
     background-color: #f1f8e9;
   }
+
   .nav-tabs .nav-link.active {
     background-color: #81c784 !important;
     color: #fff !important;
     border-color: #81c784 #81c784 #fff !important;
   }
+
   .nav-tabs .nav-link {
     color: #388e3c;
     font-weight: 500;
   }
+
   .table-hover tbody tr:hover {
-    background-color: #f0f4c3;
+    background-color: #dcedc8 !important;
   }
+
   .sortable {
     cursor: pointer;
     user-select: none;
   }
+
   .sort-indicator {
     font-size: 0.9em;
     margin-left: 2px;
   }
+
+  .table-responsive {
+    scrollbar-width: thin;
+    scrollbar-color: #81c784 #f1f8e9;
+  }
+
+  .table-responsive::-webkit-scrollbar {
+    width: 10px;
+    background: #f1f8e9;
+    border-radius: 8px;
+  }
+
+  .table-responsive::-webkit-scrollbar-thumb {
+    background: #81c784;
+    border-radius: 8px;
+    border: 2px solid #f1f8e9;
+  }
+
+  .table-responsive::-webkit-scrollbar-thumb:hover {
+    background: #388e3c;
+  }
+
+  .form-select {
+    scrollbar-width: thin;
+    scrollbar-color: #81c784 #f1f8e9;
+  }
+
+  .form-select::-webkit-scrollbar {
+    width: 8px;
+    background: #f1f8e9;
+    border-radius: 8px;
+  }
+
+  .form-select::-webkit-scrollbar-thumb {
+    background: #81c784;
+    border-radius: 8px;
+    border: 2px solid #f1f8e9;
+  }
+
+  .form-select::-webkit-scrollbar-thumb:hover {
+    background: #388e3c;
+  }
+
+  select.form-select option:hover,
+  select.form-select option:checked {
+    background: #f0f4c3 !important;
+    color: #388e3c !important;
+  }
+
   #shopBarChart {
     width: 100% !important;
     height: 100% !important;
     display: block;
   }
-  .card > #shopBarChart {
+
+  .card>#shopBarChart {
     flex: 1 1 auto;
   }
 </style>
@@ -137,10 +213,16 @@
   document.addEventListener("DOMContentLoaded", function () {
     const allRowsData = JSON.parse(document.getElementById('budgetData').textContent);
     const fundFilter = document.getElementById('fundFilter');
-    const typeFilter = document.getElementById('typeFilter');
     const yearFilter = document.getElementById('yearFilter');
+    const citemFilter = document.getElementById('citemFilter');
+    const shopFilter = document.getElementById('shopFilter');
     const tbody = document.getElementById('lazyTableBody');
     const table = document.getElementById('shopBudgetTable');
+    const totalsRow = document.getElementById('totalsRow');
+    const totalBudget = document.getElementById('totalBudget');
+    const totalOpitems = document.getElementById('totalOpitems');
+    const totalInvoice = document.getElementById('totalInvoice');
+    const totalAvBudget = document.getElementById('totalAvBudget');
     const chunkSize = 50;
     let filteredRows = allRowsData;
     let currentIndex = 0;
@@ -158,12 +240,14 @@
 
     function filterRows() {
       const fund = fundFilter.value;
-      const type = typeFilter.value;
       const year = yearFilter.value;
+      const citem = citemFilter.value;
+      const shop = shopFilter.value;
       return allRowsData.filter(row =>
         (fund === "all" || row.fonds === fund) &&
-        (type === "all" || row.type === type) &&
-        (year === "all" || row.gjahr == year)
+        (year === "all" || row.gjahr == year) &&
+        (citem === "all" || row.citem === citem) &&
+        (shop === "all" || row.shop === shop)
       );
     }
 
@@ -186,15 +270,37 @@
       currentIndex += chunkSize;
     }
 
+    function renderTotals() {
+      const fund = fundFilter.value;
+      const year = yearFilter.value;
+      if (fund !== "all" && year !== "all") {
+        let tBudget = 0, tOpitems = 0, tInvoice = 0, tAvBudget = 0;
+        filteredRows.forEach(row => {
+          tBudget += Number(row.budget) || 0;
+          tOpitems += Number(row.opitems) || 0;
+          tInvoice += Number(row.invoice) || 0;
+          tAvBudget += Number(row.av_budget) || 0;
+        });
+        totalBudget.textContent = tBudget.toLocaleString(undefined, { maximumFractionDigits: 2 });
+        totalOpitems.textContent = tOpitems.toLocaleString(undefined, { maximumFractionDigits: 2 });
+        totalInvoice.textContent = tInvoice.toLocaleString(undefined, { maximumFractionDigits: 2 });
+        totalAvBudget.textContent = tAvBudget.toLocaleString(undefined, { maximumFractionDigits: 2 });
+        totalsRow.style.display = '';
+      } else {
+        totalsRow.style.display = 'none';
+      }
+    }
+
     function resetAndRender() {
       tbody.innerHTML = '';
       currentIndex = 0;
       filteredRows = filterRows();
       filteredRows.sort((a, b) => compare(a, b, sortColumn, sortAsc));
       renderChunk();
-      renderBarChart();
+      renderTotals();
     }
 
+    // --- Chart Logic ---
     function getChartData(rows) {
       // Group by shop and sum values
       const grouped = {};
@@ -202,9 +308,9 @@
         if (!grouped[row.shop]) {
           grouped[row.shop] = { budget: 0, payment: 0, invoice: 0 };
         }
-        grouped[row.shop].budget += row.budget;
-        grouped[row.shop].payment += row.opitems; // Assuming 'opitems' means 'payment'
-        grouped[row.shop].invoice += row.invoice;
+        grouped[row.shop].budget += Number(row.budget) || 0;
+        grouped[row.shop].payment += Number(row.opitems) || 0;
+        grouped[row.shop].invoice += Number(row.invoice) || 0;
       });
       const labels = Object.keys(grouped);
       const budgets = labels.map(shop => grouped[shop].budget);
@@ -243,15 +349,14 @@
         },
         options: {
           responsive: true,
-          maintainAspectRatio: false, // <-- Add this line
+          maintainAspectRatio: false,
           plugins: {
             legend: { position: 'top' },
             title: { display: true, text: 'Budget vs. Actuals by Shop' },
             tooltip: {
               enabled: true,
               callbacks: {
-                label: function(context) {
-                  // Show value with 2 decimals
+                label: function (context) {
                   return context.dataset.label + ': ' + context.parsed.y.toFixed(2);
                 }
               }
@@ -260,19 +365,6 @@
           scales: {
             x: { stacked: false },
             y: { beginAtZero: true }
-          },
-          onClick: function(evt, elements) {
-            if (elements.length > 0) {
-              const chart = elements[0];
-              const shop = this.data.labels[chart.index];
-              // Find the row for this shop
-              const shopRows = filteredRows.filter(row => row.shop === shop);
-              let msg = `Details for ${shop}:\n`;
-              shopRows.forEach((row, idx) => {
-                msg += `Year: ${row.gjahr}, Budget: ${row.budget.toFixed(2)}, Payment: ${row.opitems.toFixed(2)}, Invoice: ${row.invoice.toFixed(2)}\n`;
-              });
-              alert(msg);
-            }
           },
           hover: {
             mode: 'nearest',
@@ -292,33 +384,35 @@
           sortColumn = col;
           sortAsc = true;
         }
-        // Update sort indicators
         table.querySelectorAll('.sort-indicator').forEach(span => span.textContent = '');
         th.querySelector('.sort-indicator').textContent = sortAsc ? '▲' : '▼';
         resetAndRender();
       });
     });
-    // Initial sort indicator
     table.querySelector('th[data-sort="shop"] .sort-indicator').textContent = '▲';
-    // Initial load
     resetAndRender();
-    // Filter change;
-    [fundFilter, typeFilter, yearFilter].forEach(filter => {
+    [fundFilter, yearFilter, citemFilter, shopFilter].forEach(filter => {
       filter.addEventListener('change', resetAndRender);
     });
-    // Scroll lazy loading
     document.querySelector('.table-responsive').addEventListener('scroll', function () {
       const nearBottom = this.scrollTop + this.clientHeight >= this.scrollHeight - 10;
       if (nearBottom && currentIndex < filteredRows.length) {
         renderChunk();
       }
     });
-    // Update chart when filters change
-    [fundFilter, typeFilter, yearFilter].forEach(filter => {
+
+    // --- Chart Tab Logic ---
+    function updateChartIfVisible() {
+      const graphicalTab = document.getElementById('graphicalView');
+      if (graphicalTab.classList.contains('active')) {
+        renderBarChart();
+      }
+    }
+    // Update chart when filters change and graphical tab is visible
+    [fundFilter, yearFilter, citemFilter, shopFilter].forEach(filter => {
       filter.addEventListener('change', updateChartIfVisible);
     });
-
-    // Update chart when switching to Graphical tab
+    // Render chart when switching to Graphical tab
     document.getElementById('graphical-tab').addEventListener('shown.bs.tab', renderBarChart);
   });
 </script>
