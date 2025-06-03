@@ -9,14 +9,14 @@ def home(request):
 def shop_wise_budget(request):
     # Fetch all data from both tables, add 'type' for internal distinction
     store_spares = BudgetData.objects.all().values(
-        'fonds', 'shop', 'budget', 'opitems', 'invoice', 'av_budget', 'gjahr', 'citem', 'fictr', 'fund_center'
+        'fonds', 'shop', 'budget', 'opitems', 'invoice', 'av_budget', 'gjahr', 'citem'
     )
     store_spares = [
         {**row, 'type': 'STORE-SPARES'} for row in store_spares
     ]
 
     other_services = BudgetDataOther.objects.all().values(
-        'fonds', 'shop', 'budget', 'opitems', 'invoice', 'av_budget', 'gjahr', 'citem', 'fictr', 'fund_center'
+        'fonds', 'shop', 'budget', 'opitems', 'invoice', 'av_budget', 'gjahr', 'citem'
     )
     other_services = [
         {**row, 'type': 'OTHER-SERVICES'} for row in other_services
