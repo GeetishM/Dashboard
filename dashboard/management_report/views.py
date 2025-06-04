@@ -162,8 +162,8 @@ def pr_released_enquiry_pending(request):
         'data': data,
         'pur_grp_grp_list': sorted(pur_grp_grp_set),
         'shop_list': sorted(shop_set),
-        'fy_pr_list': sorted(fy_pr_set, reverse=True),
-        'fy_enq_list': sorted(fy_enq_set, reverse=True),
+        'fy_pr_list': sorted(fy_pr_set),
+        'fy_enq_list': sorted(fy_enq_set),
     }
     return render(request, 'management_report/pr_released_enquiry_pending.html', context)
 
@@ -190,7 +190,7 @@ def enquiry_created_po_pending(request):
     context = {
         'data': data,
         'pur_grp_grp_list': sorted(pur_grp_grp_set),
-        'fy_enq_list': sorted(fy_enq_set, reverse=True),
+        'fy_enq_list': sorted(fy_enq_set),
     }
     return render(request, 'management_report/enquiry_created_po_pending.html', context)
 
