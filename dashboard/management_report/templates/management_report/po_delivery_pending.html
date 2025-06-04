@@ -109,6 +109,34 @@
     .theme-title {
         color: #ef6c00 !important;
     }
+
+    /* --- Custom Scrollbar Styling (theme-matched) --- */
+    .table-responsive,
+    .form-select {
+        scrollbar-width: thin;
+        scrollbar-color: #ffb74d #fff3e0;
+    }
+    .table-responsive::-webkit-scrollbar,
+    .form-select::-webkit-scrollbar {
+        width: 10px;
+        background: #fff3e0;
+        border-radius: 8px;
+    }
+    .table-responsive::-webkit-scrollbar-thumb,
+    .form-select::-webkit-scrollbar-thumb {
+        background: #ffb74d;
+        border-radius: 8px;
+        border: 2px solid #fff3e0;
+    }
+    .table-responsive::-webkit-scrollbar-thumb:hover,
+    .form-select::-webkit-scrollbar-thumb:hover {
+        background: #ef6c00;
+    }
+    select.form-select option:hover,
+    select.form-select option:checked {
+        background: #ffe0b2 !important;
+        color: #ef6c00 !important;
+    }
 </style>
 
 <script>

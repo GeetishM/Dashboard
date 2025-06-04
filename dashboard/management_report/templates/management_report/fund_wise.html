@@ -7,6 +7,22 @@
         <h2 class="mb-0 fw-bold text-success">Budget Analysis Fund-Wise</h2>
     </div>
 
+    <!-- Tabs Navigation -->
+    <ul class="nav nav-tabs mb-3" id="viewTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="tabular-tab" data-bs-toggle="tab" data-bs-target="#tabularView" type="button"
+                role="tab" aria-controls="tabularView" aria-selected="true">
+                <i class="bi bi-table"></i> Tabular
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="graphical-tab" data-bs-toggle="tab" data-bs-target="#graphicalView" type="button"
+                role="tab" aria-controls="graphicalView" aria-selected="false">
+                <i class="bi bi-bar-chart"></i> Graphical
+            </button>
+        </li>
+    </ul>
+
     <!-- Year Filter Dropdown -->
     <div class="mb-3">
         <label for="yearFilter" class="form-label"><strong>Filter by Year:</strong></label>
@@ -18,21 +34,31 @@
         </select>
     </div>
 
-    <!-- Tabular View Only -->
-    <div class="table-responsive shadow rounded" style="max-height: 600px; overflow-y: auto;">
-        <table class="table table-bordered table-hover align-middle text-center mb-0" id="fundBudgetTable">
-            <thead class="table-success sticky-top">
-                <tr>
-                    <th data-sort="fonds" class="sortable">FOND <span class="sort-indicator"></span></th>
-                    <th data-sort="budget" class="sortable">Budget <span class="sort-indicator"></span></th>
-                    <th data-sort="opitems" class="sortable">Open Item <span class="sort-indicator"></span></th>
-                    <th data-sort="invoice" class="sortable">Invoiced <span class="sort-indicator"></span></th>
-                    <th data-sort="av_budget" class="sortable">Budget Available <span class="sort-indicator"></span>
-                    </th>
-                </tr>
-            </thead>
-            <tbody id="lazyTableBody"></tbody>
-        </table>
+    <div class="tab-content" id="viewTabsContent">
+        <div class="tab-pane fade show active" id="tabularView" role="tabpanel" aria-labelledby="tabular-tab">
+            <div class="table-responsive shadow rounded" style="max-height: 600px; overflow-y: auto;">
+                <table class="table table-bordered table-hover align-middle text-center mb-0" id="fundBudgetTable">
+                    <thead class="table-success sticky-top">
+                        <tr>
+                            <th data-sort="fonds" class="sortable">FOND <span class="sort-indicator"></span></th>
+                            <th data-sort="budget" class="sortable">Budget <span class="sort-indicator"></span></th>
+                            <th data-sort="opitems" class="sortable">Open Item <span class="sort-indicator"></span></th>
+                            <th data-sort="invoice" class="sortable">Invoiced <span class="sort-indicator"></span></th>
+                            <th data-sort="av_budget" class="sortable">Budget Available <span class="sort-indicator"></span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="lazyTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Graphical View -->
+        <div class="tab-pane fade" id="graphicalView" role="tabpanel" aria-labelledby="graphical-tab">
+            <div class="card shadow rounded p-5 d-flex align-items-center justify-content-center"
+                style="min-height:300px;">
+                <span class="text-muted fs-4">Graphical Area (Coming Soon)</span>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -42,31 +68,100 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
 <style>
-    .table th,
-    .table td {
-        vertical-align: middle;
-    }
+  .table th,
+  .table td {
+    vertical-align: middle;
+  }
 
-    .form-select {
-        border-radius: 6px;
-        padding: 5px 10px;
-        border: 1px solid #81c784;
-        background-color: #f1f8e9;
-    }
+  .form-select {
+    border-radius: 6px;
+    padding: 5px 10px;
+    border: 1px solid #81c784;
+    background-color: #f1f8e9;
+  }
 
-    .table-hover tbody tr:hover {
-        background-color: #f0f4c3;
-    }
+  .nav-tabs .nav-link.active {
+    background-color: #81c784 !important;
+    color: #fff !important;
+    border-color: #81c784 #81c784 #fff !important;
+  }
 
-    .sortable {
-        cursor: pointer;
-        user-select: none;
-    }
+  .nav-tabs .nav-link {
+    color: #388e3c;
+    font-weight: 500;
+  }
 
-    .sort-indicator {
-        font-size: 0.9em;
-        margin-left: 2px;
-    }
+  .table-hover tbody tr:hover {
+    background-color: #dcedc8 !important;
+  }
+
+  .sortable {
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .sort-indicator {
+    font-size: 0.9em;
+    margin-left: 2px;
+  }
+
+  .table-responsive {
+    scrollbar-width: thin;
+    scrollbar-color: #81c784 #f1f8e9;
+  }
+
+  .table-responsive::-webkit-scrollbar {
+    width: 10px;
+    background: #f1f8e9;
+    border-radius: 8px;
+  }
+
+  .table-responsive::-webkit-scrollbar-thumb {
+    background: #81c784;
+    border-radius: 8px;
+    border: 2px solid #f1f8e9;
+  }
+
+  .table-responsive::-webkit-scrollbar-thumb:hover {
+    background: #388e3c;
+  }
+
+  .form-select {
+    scrollbar-width: thin;
+    scrollbar-color: #81c784 #f1f8e9;
+  }
+
+  .form-select::-webkit-scrollbar {
+    width: 8px;
+    background: #f1f8e9;
+    border-radius: 8px;
+  }
+
+  .form-select::-webkit-scrollbar-thumb {
+    background: #81c784;
+    border-radius: 8px;
+    border: 2px solid #f1f8e9;
+  }
+
+  .form-select::-webkit-scrollbar-thumb:hover {
+    background: #388e3c;
+  }
+
+  select.form-select option:hover,
+  select.form-select option:checked {
+    background: #f0f4c3 !important;
+    color: #388e3c !important;
+  }
+
+  #shopBarChart {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+  }
+
+  .card>#shopBarChart {
+    flex: 1 1 auto;
+  }
 </style>
 
 <script>
