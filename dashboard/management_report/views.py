@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from .models import BudgetData, BudgetDataOther, PrRelPendLive, PrEnqStatusLive, PendPoStatusLive
+from .models import BudgetData, BudgetDataOther, InventorySheet1, InventorySheet2, InventorySheet3,StockErp, PrRelPendLive, PrEnqStatusLive, PendPoStatusLive
+import pandas as pd
 
 def home(request):
     return render(request, 'management_report/home.html')
@@ -154,4 +155,84 @@ def po_dp_expired(request):
 # --- Reports ---
 
 def stock_position(request):
-    return render(request, 'management_report/stock_position.html')
+    # Fetch data from all three inventory tables
+    inv1 = pd.DataFrame(list(InventorySheet1.objects.all().values('mat_no', 'mat_dsc', 'val_price')))
+    inv2 = pd.DataFrame(list(InventorySheet2.objects.all().values('mat_no', 'mat_dsc', 'val_price')))
+    inv3 = pd.DataFrame(list(InventorySheet3.objects.all().values('mat_no', 'mat_dsc', 'val_price')))
+
+    # Concatenate
+    combined_df = pd.concat([inv1, inv2, inv3], ignore_index=True)
+
+    # Rename columns to match DB field names if needed
+    combined_df.rename(columns={
+        'mat_no': 'MAT_NO',
+        'mat_dsc': 'MAT_DSC',
+        'val_price': 'VAL_PRICE'
+    }, inplace=True)
+
+    if combined_df.empty:
+        grouped = pd.DataFrame(columns=['MAT_GROUP', 'Count', 'Total_Value', 'Average_Value', 'Max_Value'])
+    else:
+        combined_df['MAT_GROUP'] = combined_df['MAT_NO'].astype(str).str[:3]
+        grouped = combined_df.groupby('MAT_GROUP').agg(
+            Count=('VAL_PRICE', 'count'),
+            Total_Value=('VAL_PRICE', 'sum'),
+            Average_Value=('VAL_PRICE', 'mean'),
+            Max_Value=('VAL_PRICE', 'max')
+        ).reset_index()
+        grouped = grouped.sort_values(by='MAT_GROUP')
+
+    mat_group_list = grouped['MAT_GROUP'].tolist()
+
+    # --- Add this block for pie charts ---
+    df = pd.DataFrame(list(StockErp.objects.all().values('mill', 'stock')))
+
+    # Saleable Stock
+    saleable_mills = ['MM', 'URM', 'RSMR', 'RSMS', 'BRM', 'WRM']
+    saleable_df = df[df['mill'].isin(saleable_mills)]
+    saleable_grouped = saleable_df.groupby('mill', as_index=False)['stock'].sum()
+    saleable_total = saleable_grouped['stock'].sum()
+
+    # Rollable Stock
+    rollable_mills = ['SMS2', 'SMS3']
+    rollable_df = df[df['mill'].isin(rollable_mills)]
+    rollable_grouped = rollable_df.groupby('mill', as_index=False)['stock'].sum()
+    rollable_total = rollable_grouped['stock'].sum()
+
+    context = {
+        'grouped_data': grouped.to_dict(orient='records'),
+        'mat_group_list': mat_group_list,
+        'saleable_labels': list(saleable_grouped['mill']),
+        'saleable_data': list(saleable_grouped['stock']),
+        'saleable_total': saleable_total,
+        'rollable_labels': list(rollable_grouped['mill']),
+        'rollable_data': list(rollable_grouped['stock']),
+        'rollable_total': rollable_total,
+    }
+    return render(request, 'management_report/stock_position.html', context)
+
+def stock_pie_charts(request):
+    # Fetch all data
+    df = pd.DataFrame(list(StockErp.objects.all().values('mill', 'stock')))
+
+    # Saleable Stock
+    saleable_mills = ['MM', 'URM', 'RSMR', 'RSMS', 'BRM', 'WRM']
+    saleable_df = df[df['mill'].isin(saleable_mills)]
+    saleable_grouped = saleable_df.groupby('mill', as_index=False)['stock'].sum()
+    saleable_total = saleable_grouped['stock'].sum()
+
+    # Rollable Stock
+    rollable_mills = ['SMS2', 'SMS3']
+    rollable_df = df[df['mill'].isin(rollable_mills)]
+    rollable_grouped = rollable_df.groupby('mill', as_index=False)['stock'].sum()
+    rollable_total = rollable_grouped['stock'].sum()
+
+    context = {
+        'saleable_labels': saleable_grouped['mill'].tolist(),
+        'saleable_data': saleable_grouped['stock'].tolist(),
+        'saleable_total': saleable_total,
+        'rollable_labels': rollable_grouped['mill'].tolist(),
+        'rollable_data': rollable_grouped['stock'].tolist(),
+        'rollable_total': rollable_total,
+    }
+    return render(request, 'management_report/stock_pie_charts.html', context)
