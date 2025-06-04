@@ -4,11 +4,10 @@
 {% block content %}
 <div class="container py-4">
     <div class="d-flex align-items-center mb-4">
-        <img src="https://img.icons8.com/color/48/000000/document.png" alt="PR Icon" class="me-2" />
-        <h2 class="mb-0 fw-bold text-primary">PR Created - Release Pending</h2>
+        <h2 class="mb-0 fw-bold theme-title">PR Created - Release Pending</h2>
     </div>
 
-    <!-- Tab Navigation -->
+     <!-- Tab Navigation -->
     <ul class="nav nav-tabs mb-3" id="viewTabs" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="tabular-tab" data-bs-toggle="tab" data-bs-target="#tabularView"
@@ -24,6 +23,48 @@
         </li>
     </ul>
 
+    <!-- Filter Controls -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <label for="purGrpGrpFilter" class="form-label"><strong>PUR_GRP_GRP:</strong></label>
+            <select id="purGrpGrpFilter" class="form-select">
+                <option value="all" selected>All</option>
+                {% for val in pur_grp_grp_list %}
+                <option value="{{ val }}">{{ val }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="shopFilter" class="form-label"><strong>Shop:</strong></label>
+            <select id="shopFilter" class="form-select">
+                <option value="all" selected>All</option>
+                {% for shop in shop_list %}
+                <option value="{{ shop }}">{{ shop }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="prDateFilter" class="form-label"><strong>PR Fiscal Year:</strong></label>
+            <select id="prDateFilter" class="form-select">
+                <option value="all" selected>All</option>
+                {% for fy in fiscal_year_list %}
+                <option value="{{ fy }}">{{ fy }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="delDateFilter" class="form-label"><strong>DEL Fiscal Year:</strong></label>
+            <select id="delDateFilter" class="form-select">
+                <option value="all" selected>All</option>
+                {% for fy in fiscal_year_list %}
+                <option value="{{ fy }}">{{ fy }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+   
+
     <div class="tab-content">
         <!-- Tabular View -->
         <div class="tab-pane fade show active" id="tabularView" role="tabpanel" aria-labelledby="tabular-tab">
@@ -32,20 +73,25 @@
                     <thead class="table-primary sticky-top">
                         <tr>
                             <th data-sort="pur_grp_grp" class="sortable">PUR_GRP_GRP <span class="sort-indicator"></span></th>
+                            <th data-sort="pur_grp" class="sortable">PUR_GRP <span class="sort-indicator"></span></th>
+                            <th data-sort="fund_center" class="sortable">FUND_CENTER <span class="sort-indicator"></span></th>
+                            <th data-sort="shop" class="sortable">SHOP <span class="sort-indicator"></span></th>
+                            <th data-sort="pr_date" class="sortable">PR_DATE <span class="sort-indicator"></span></th>
+                            <th data-sort="del_date" class="sortable">DEL_DATE <span class="sort-indicator"></span></th>
                             <th data-sort="item_value" class="sortable">Item Value <span class="sort-indicator"></span></th>
                             <th data-sort="pr_value" class="sortable">PR Value <span class="sort-indicator"></span></th>
                         </tr>
                     </thead>
                     <tbody id="lazyTableBody"></tbody>
-                </table>
+                </table> 
             </div>
         </div>
         <!-- Graphical View -->
         <div class="tab-pane fade" id="graphicalView" role="tabpanel" aria-labelledby="graphical-tab">
-            <div class="card shadow rounded p-5 d-flex align-items-center justify-content-center"
-                style="min-height:300px;">
-                <span class="text-muted fs-4">Graphical Area (Coming Soon)</span>
-            </div>
+            <div class="card shadow rounded p-3 d-flex align-items-stretch justify-content-stretch"
+        style="min-height:400px; height:60vh; width:100%;">
+        <canvas id="prByShopBarChart" style="width:100% !important; height:100% !important; display:block;"></canvas>
+    </div>
         </div>
     </div>
 </div>
@@ -64,23 +110,29 @@
     .form-select {
         border-radius: 6px;
         padding: 5px 10px;
-        border: 1px solid #64b5f6;
-        background-color: #e3f2fd;
+        border: 1px solid #ffb74d;
+        background-color: #fff3e0;
     }
 
     .nav-tabs .nav-link.active {
-        background-color: #64b5f6 !important;
-        color: #fff !important;
-        border-color: #64b5f6 #64b5f6 #fff !important;
+        background-color: #ffb74d !important;
+        color: #fff3e0 !important;
+        border-color: #ffb74d #ffb74d #fff !important;
     }
 
     .nav-tabs .nav-link {
-        color: #1976d2;
+        color: #ef6c00;
         font-weight: 500;
     }
 
+    .table-primary,
+    .table thead th {
+        background-color: #ffe0b2 !important;
+        color: #ef6c00 !important;
+    }
+
     .table-hover tbody tr:hover {
-        background-color: #bbdefb;
+        background-color: #fff3e0;
     }
 
     .sortable {
@@ -92,11 +144,21 @@
         font-size: 0.9em;
         margin-left: 2px;
     }
+
+    .theme-title {
+        color: #ef6c00 !important;
+    }
 </style>
 
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const allRowsData = JSON.parse(document.getElementById('prReleasePendingData').textContent);
+        const purGrpGrpFilter = document.getElementById('purGrpGrpFilter');
+        const shopFilter = document.getElementById('shopFilter');
+        const prDateFilter = document.getElementById('prDateFilter');
+        const delDateFilter = document.getElementById('delDateFilter');
         const tbody = document.getElementById('lazyTableBody');
         const table = document.getElementById('prReleasePendingTable');
         let filteredRows = allRowsData;
@@ -104,6 +166,31 @@
         let currentIndex = 0;
         let sortColumn = "pur_grp_grp";
         let sortAsc = true;
+
+        function getFiscalYear(dateStr) {
+            if (!dateStr) return '';
+            const dt = new Date(dateStr);
+            const year = dt.getFullYear();
+            const month = dt.getMonth() + 1;
+            if (month >= 4) {
+                return `FY ${year}-${String(year + 1).slice(-2)}`;
+            } else {
+                return `FY ${year - 1}-${String(year).slice(-2)}`;
+            }
+        }
+
+        function filterRows() {
+            const purGrpGrp = purGrpGrpFilter.value;
+            const shop = shopFilter.value;
+            const prFy = prDateFilter.value;
+            const delFy = delDateFilter.value;
+            return allRowsData.filter(row =>
+                (purGrpGrp === "all" || row.pur_grp_grp === purGrpGrp) &&
+                (shop === "all" || row.shop === shop) &&
+                (prFy === "all" || getFiscalYear(row.pr_date) === prFy) &&
+                (delFy === "all" || getFiscalYear(row.del_date) === delFy)
+            );
+        }
 
         function compare(a, b, col, asc) {
             if (typeof a[col] === "string") {
@@ -120,6 +207,11 @@
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
       <td>${row.pur_grp_grp}</td>
+      <td>${row.pur_grp}</td>
+      <td>${row.fund_center}</td>
+      <td>${row.shop}</td>
+      <td>${row.pr_date}</td>
+      <td>${row.del_date}</td>
       <td class="text-end">${row.item_value.toFixed(2)}</td>
       <td class="text-end">${row.pr_value.toFixed(2)}</td>
     `;
@@ -132,7 +224,7 @@
         function resetAndRender() {
             tbody.innerHTML = '';
             currentIndex = 0;
-            filteredRows = allRowsData.slice();
+            filteredRows = filterRows();
             filteredRows.sort((a, b) => compare(a, b, sortColumn, sortAsc));
             renderChunk();
         }
@@ -167,6 +259,88 @@
                 renderChunk();
             }
         });
+
+        // Add filter event listeners
+        [purGrpGrpFilter, shopFilter, prDateFilter, delDateFilter].forEach(filter => {
+            filter.addEventListener('change', resetAndRender);
+        });
+
+        // --- PRs by Shop Grouped Bar Chart ---
+    function getPrByShopChartData(rows) {
+        const grouped = {};
+        rows.forEach(row => {
+            const shop = row.shop || "Unknown";
+            if (!grouped[shop]) {
+                grouped[shop] = { count: 0, pr_value: 0 };
+            }
+            grouped[shop].count += 1;
+            grouped[shop].pr_value += Number(row.pr_value) || 0;
+        });
+        const labels = Object.keys(grouped);
+        const counts = labels.map(shop => grouped[shop].count);
+        const prValues = labels.map(shop => grouped[shop].pr_value);
+        return { labels, counts, prValues };
+    }
+
+    let prByShopChartInstance = null;
+
+    function renderPrByShopBarChart() {
+        const ctx = document.getElementById('prByShopBarChart').getContext('2d');
+        const { labels, counts, prValues } = getPrByShopChartData(filteredRows);
+
+        if (prByShopChartInstance) prByShopChartInstance.destroy();
+
+        prByShopChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'PR Count',
+                        data: counts,
+                        backgroundColor: '#ffb74d'
+                    },
+                    {
+                        label: 'Total PR Value',
+                        data: prValues,
+                        backgroundColor: '#ffe082'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' },
+                    title: { display: true, text: 'PRs by Shop' },
+                    tooltip: {
+                        enabled: true,
+                        callbacks: {
+                            label: function (context) {
+                                return context.dataset.label + ': ' + context.parsed.y.toLocaleString(undefined, {maximumFractionDigits: 2});
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: { stacked: false, title: { display: true, text: 'Shop' } },
+                    y: { beginAtZero: true, title: { display: true, text: 'Count / Value' } }
+                }
+            }
+        });
+    }
+
+    // Render chart when switching to Graphical tab
+    document.getElementById('graphical-tab').addEventListener('shown.bs.tab', renderPrByShopBarChart);
+
+    // Update chart when filters change and graphical tab is visible
+    [purGrpGrpFilter, shopFilter, prDateFilter, delDateFilter].forEach(filter => {
+        filter.addEventListener('change', function () {
+            if (document.getElementById('graphicalView').classList.contains('active')) {
+                renderPrByShopBarChart();
+            }
+        });
+    });
     });
 </script>
 {% endblock %}

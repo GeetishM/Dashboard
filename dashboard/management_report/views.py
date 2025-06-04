@@ -1,6 +1,11 @@
 from django.shortcuts import render
+<<<<<<< HEAD
 from .models import BudgetData, BudgetDataOther, InventorySheet1, InventorySheet2, InventorySheet3,StockErp, PrRelPendLive, PrEnqStatusLive, PendPoStatusLive
 import pandas as pd
+=======
+from .models import BudgetData, BudgetDataOther, PrRelPendLive, PrEnqStatusLive, PendPoStatusLive
+from datetime import date
+>>>>>>> 47e6cdf9434a719072ee5b8ed8f97ed6923eb2f0
 
 def home(request):
     return render(request, 'management_report/home.html')
@@ -74,30 +79,97 @@ def commitment_item_wise(request):
 
 # --- Purchase Status Views ---
 
+def get_fiscal_year(dt):
+    if not dt:
+        return ''
+    year = dt.year
+    if dt.month >= 4:
+        return f"FY {year}-{str(year+1)[-2:]}"
+    else:
+        return f"FY {year-1}-{str(year)[-2:]}"
+
 def pr_created_release_pending(request):
-    queryset = PrRelPendLive.objects.all().order_by('pur_grp_grp')
+    queryset = (
+        PrRelPendLive.objects
+        .exclude(pur_grp_grp__isnull=True)
+        .exclude(pur_grp_grp__exact='')
+        .order_by('pur_grp_grp')
+    )
     data = []
+    pur_grp_grp_set = set()
+    shop_set = set()
+    fy_set = set()
     for row in queryset:
+        fy = get_fiscal_year(row.pr_date)
+        pur_grp_grp_set.add(row.pur_grp_grp or '')
+        shop_set.add(row.shop or '')
+        if fy:
+            fy_set.add(fy)
         data.append({
             'pur_grp_grp': row.pur_grp_grp or '',
+            'pur_grp': row.pur_grp or '',
+            'fund_center': row.fund_center or '',
+            'shop': row.shop or '',
+            'pr_date': row.pr_date.strftime('%Y-%m-%d') if row.pr_date else '',
+            'del_date': row.del_date.strftime('%Y-%m-%d') if row.del_date else '',
             'item_value': row.item_value or 0,
-            'pr_value': row.pr_value or 0,
+            'pr_value': float(row.pr_value or 0),
+            'fiscal_year': fy,
+            'rel_pend_with': row.rel_pend_with or '',
         })
-    return render(request, 'management_report/pr_created_release_pending.html', {
+    context = {
         'data': data,
-    })
+        'pur_grp_grp_list': sorted(pur_grp_grp_set),
+        'shop_list': sorted(shop_set),
+        'fiscal_year_list': sorted(fy_set),  #if want the reverse order, use sorted(fy_set, reverse=True)
+    }
+    return render(request, 'management_report/pr_created_release_pending.html', context)
 
 def pr_released_enquiry_pending(request):
     queryset = PrEnqStatusLive.objects.all().order_by('pur_grp_grp')
     data = []
+    pur_grp_grp_set = set()
+    shop_set = set()
+    fy_pr_set = set()
+    fy_enq_set = set()
+
+    def get_fiscal_year(dt):
+        if not dt:
+            return ''
+        year = dt.year
+        if dt.month >= 4:
+            return f"FY {year}-{str(year+1)[-2:]}"
+        else:
+            return f"FY {year-1}-{str(year)[-2:]}"
+
     for row in queryset:
+        fy_pr = get_fiscal_year(row.pr_date)
+        fy_enq = get_fiscal_year(row.enq_date)
+        pur_grp_grp_set.add(row.pur_grp_grp or '')
+        shop_set.add(row.shop or '')
+        if fy_pr:
+            fy_pr_set.add(fy_pr)
+        if fy_enq:
+            fy_enq_set.add(fy_enq)
         data.append({
             'pur_grp_grp': row.pur_grp_grp or '',
-            'pr_value': row.pr_value or 0,
+            'shop': row.shop or '',
+            'fund_center': row.fund_center or '',
+            'sug_mod_tend': row.sug_mod_tend or '',
+            'pr_date': row.pr_date.strftime('%Y-%m-%d') if row.pr_date else '',
+            'enq_date': row.enq_date.strftime('%Y-%m-%d') if row.enq_date else '',
+            'pr_value': float(row.pr_value or 0),
+            'fy_pr': fy_pr,
+            'fy_enq': fy_enq,
         })
-    return render(request, 'management_report/pr_released_enquiry_pending.html', {
+    context = {
         'data': data,
-    })
+        'pur_grp_grp_list': sorted(pur_grp_grp_set),
+        'shop_list': sorted(shop_set),
+        'fy_pr_list': sorted(fy_pr_set, reverse=True),
+        'fy_enq_list': sorted(fy_enq_set, reverse=True),
+    }
+    return render(request, 'management_report/pr_released_enquiry_pending.html', context)
 
 def enquiry_created_po_pending(request):
     return render(request, 'management_report/enquiry_created_po_pending.html')

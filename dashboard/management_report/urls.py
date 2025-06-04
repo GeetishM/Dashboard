@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-     path('', views.home, name='home'),  # <-- root URL goes to home page
+    path('', views.home, name='home'),  # <-- root URL goes to home page
     # Budget Analysis
     path('shop-wise/', views.shop_wise_budget, name='shop_wise'),
     path('fund-wise/', views.fund_wise, name='fund_wise'),
