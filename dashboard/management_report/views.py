@@ -1,11 +1,7 @@
 from django.shortcuts import render
-<<<<<<< HEAD
 from .models import BudgetData, BudgetDataOther, InventorySheet1, InventorySheet2, InventorySheet3,StockErp, PrRelPendLive, PrEnqStatusLive, PendPoStatusLive
 import pandas as pd
-=======
-from .models import BudgetData, BudgetDataOther, PrRelPendLive, PrEnqStatusLive, PendPoStatusLive
 from datetime import date
->>>>>>> 47e6cdf9434a719072ee5b8ed8f97ed6923eb2f0
 
 def home(request):
     return render(request, 'management_report/home.html')
