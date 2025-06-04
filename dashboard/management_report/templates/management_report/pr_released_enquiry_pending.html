@@ -7,6 +7,22 @@
         <h2 class="mb-0 fw-bold theme-title">PR Released - Enquiry Pending</h2>
     </div>
 
+     <!-- Tab Navigation -->
+    <ul class="nav nav-tabs mb-3" id="viewTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="tabular-tab" data-bs-toggle="tab" data-bs-target="#tabularView"
+                type="button" role="tab" aria-controls="tabularView" aria-selected="true">
+                <i class="bi bi-table"></i> Tabular
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="graphical-tab" data-bs-toggle="tab" data-bs-target="#graphicalView"
+                type="button" role="tab" aria-controls="graphicalView" aria-selected="false">
+                <i class="bi bi-bar-chart"></i> Graphical
+            </button>
+        </li>
+    </ul>
+
     <!-- Filter Controls -->
     <div class="row mb-4">
         <div class="col-md-3">
@@ -46,22 +62,6 @@
             </select>
         </div>
     </div>
-
-    <!-- Tab Navigation -->
-    <ul class="nav nav-tabs mb-3" id="viewTabs" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="tabular-tab" data-bs-toggle="tab" data-bs-target="#tabularView"
-                type="button" role="tab" aria-controls="tabularView" aria-selected="true">
-                <i class="bi bi-table"></i> Tabular
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="graphical-tab" data-bs-toggle="tab" data-bs-target="#graphicalView"
-                type="button" role="tab" aria-controls="graphicalView" aria-selected="false">
-                <i class="bi bi-bar-chart"></i> Graphical
-            </button>
-        </li>
-    </ul>
 
     <div class="tab-content">
         <!-- Tabular View -->
@@ -133,7 +133,45 @@
         background-color: #fff3e0;
     }
 
+    .sortable {
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .sort-indicator {
+        font-size: 0.9em;
+        margin-left: 2px;
+    }
+
     .theme-title {
+        color: #ef6c00 !important;
+    }
+
+    /* --- Custom Scrollbar Styling (theme-matched) --- */
+    .table-responsive,
+    .form-select {
+        scrollbar-width: thin;
+        scrollbar-color: #ffb74d #fff3e0;
+    }
+    .table-responsive::-webkit-scrollbar,
+    .form-select::-webkit-scrollbar {
+        width: 10px;
+        background: #fff3e0;
+        border-radius: 8px;
+    }
+    .table-responsive::-webkit-scrollbar-thumb,
+    .form-select::-webkit-scrollbar-thumb {
+        background: #ffb74d;
+        border-radius: 8px;
+        border: 2px solid #fff3e0;
+    }
+    .table-responsive::-webkit-scrollbar-thumb:hover,
+    .form-select::-webkit-scrollbar-thumb:hover {
+        background: #ef6c00;
+    }
+    select.form-select option:hover,
+    select.form-select option:checked {
+        background: #ffe0b2 !important;
         color: #ef6c00 !important;
     }
 </style>
