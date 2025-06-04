@@ -4,8 +4,7 @@
 {% block content %}
 <div class="container py-4">
     <div class="d-flex align-items-center mb-4">
-        <img src="https://img.icons8.com/color/48/000000/document.png" alt="PO Icon" class="me-2" />
-        <h2 class="mb-0 fw-bold text-primary">PO DP Expired</h2>
+        <h2 class="mb-0 fw-bold theme-title">PO DP Expired</h2>
     </div>
 
     <div class="table-responsive shadow rounded" style="max-height: 600px; overflow-y: auto;">
@@ -30,25 +29,47 @@
     .table td {
         vertical-align: middle;
     }
-    .nav-tabs .nav-link.active {
-        background-color: #64b5f6 !important;
-        color: #fff !important;
-        border-color: #64b5f6 #64b5f6 #fff !important;
+
+    .form-select {
+        border-radius: 6px;
+        padding: 5px 10px;
+        border: 1px solid #ffb74d;
+        background-color: #fff3e0;
     }
+
+    .nav-tabs .nav-link.active {
+        background-color: #ffb74d !important;
+        color: #fff3e0 !important;
+        border-color: #ffb74d #ffb74d #fff !important;
+    }
+
     .nav-tabs .nav-link {
-        color: #1976d2;
+        color: #ef6c00;
         font-weight: 500;
     }
-    .table-hover tbody tr:hover {
-        background-color: #bbdefb;
+
+    .table-primary,
+    .table thead th {
+        background-color: #ffe0b2 !important;
+        color: #ef6c00 !important;
     }
+
+    .table-hover tbody tr:hover {
+        background-color: #fff3e0;
+    }
+
     .sortable {
         cursor: pointer;
         user-select: none;
     }
+
     .sort-indicator {
         font-size: 0.9em;
         margin-left: 2px;
+    }
+
+    .theme-title {
+        color: #ef6c00 !important;
     }
 </style>
 
