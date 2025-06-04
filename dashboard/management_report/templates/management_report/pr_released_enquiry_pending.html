@@ -4,11 +4,10 @@
 {% block content %}
 <div class="container py-4">
     <div class="d-flex align-items-center mb-4">
-        <img src="https://img.icons8.com/color/48/000000/document.png" alt="PR Icon" class="me-2" />
-        <h2 class="mb-0 fw-bold text-primary">PR Released - Enquiry Pending</h2>
+        <h2 class="mb-0 fw-bold theme-title">PR Released - Enquiry Pending</h2>
     </div>
 
-    <!-- Tab Navigation -->
+     <!-- Tab Navigation -->
     <ul class="nav nav-tabs mb-3" id="viewTabs" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="tabular-tab" data-bs-toggle="tab" data-bs-target="#tabularView"
@@ -24,15 +23,61 @@
         </li>
     </ul>
 
+    <!-- Filter Controls -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <label for="purGrpGrpFilter" class="form-label"><strong>PUR_GRP_GRP:</strong></label>
+            <select id="purGrpGrpFilter" class="form-select">
+                <option value="all" selected>All</option>
+                {% for val in pur_grp_grp_list %}
+                <option value="{{ val }}">{{ val }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="shopFilter" class="form-label"><strong>Shop:</strong></label>
+            <select id="shopFilter" class="form-select">
+                <option value="all" selected>All</option>
+                {% for shop in shop_list %}
+                <option value="{{ shop }}">{{ shop }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="prDateFilter" class="form-label"><strong>PR Fiscal Year:</strong></label>
+            <select id="prDateFilter" class="form-select">
+                <option value="all" selected>All</option>
+                {% for fy in fy_pr_list %}
+                <option value="{{ fy }}">{{ fy }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="enqDateFilter" class="form-label"><strong>ENQ Fiscal Year:</strong></label>
+            <select id="enqDateFilter" class="form-select">
+                <option value="all" selected>All</option>
+                {% for fy in fy_enq_list %}
+                <option value="{{ fy }}">{{ fy }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
     <div class="tab-content">
         <!-- Tabular View -->
         <div class="tab-pane fade show active" id="tabularView" role="tabpanel" aria-labelledby="tabular-tab">
             <div class="table-responsive shadow rounded" style="max-height: 600px; overflow-y: auto;">
-                <table class="table table-bordered table-hover align-middle text-center mb-0" id="prReleasedEnquiryPendingTable">
+                <table class="table table-bordered table-hover align-middle text-center mb-0"
+                    id="prReleasedEnquiryPendingTable">
                     <thead class="table-primary sticky-top">
                         <tr>
-                            <th data-sort="pur_grp_grp" class="sortable">PUR_GRP_GRP <span class="sort-indicator"></span></th>
-                            <th data-sort="pr_value" class="sortable">PR Value <span class="sort-indicator"></span></th>
+                            <th class="sortable" data-sort="pur_grp_grp">PUR_GRP_GRP <span class="sort-indicator"></span></th>
+                            <th class="sortable" data-sort="shop">Shop <span class="sort-indicator"></span></th>
+                            <th class="sortable" data-sort="fund_center">FUND_CENTER <span class="sort-indicator"></span></th>
+                            <th class="sortable" data-sort="sug_mod_tend">SUG_MOD_TEND <span class="sort-indicator"></span></th>
+                            <th class="sortable wide-col" data-sort="pr_date">PR_DATE <span class="sort-indicator"></span></th>
+                            <th class="sortable wide-col" data-sort="enq_date">ENQ_DATE <span class="sort-indicator"></span></th>
+                            <th class="sortable" data-sort="pr_value">PR Value <span class="sort-indicator"></span></th>
                         </tr>
                     </thead>
                     <tbody id="lazyTableBody"></tbody>
@@ -63,23 +108,29 @@
     .form-select {
         border-radius: 6px;
         padding: 5px 10px;
-        border: 1px solid #64b5f6;
-        background-color: #e3f2fd;
+        border: 1px solid #ffb74d;
+        background-color: #fff3e0;
     }
 
     .nav-tabs .nav-link.active {
-        background-color: #64b5f6 !important;
-        color: #fff !important;
-        border-color: #64b5f6 #64b5f6 #fff !important;
+        background-color: #ffb74d !important;
+        color: #fff3e0 !important;
+        border-color: #ffb74d #ffb74d #fff !important;
     }
 
     .nav-tabs .nav-link {
-        color: #1976d2;
+        color: #ef6c00;
         font-weight: 500;
     }
 
+    .table-primary,
+    .table thead th {
+        background-color: #ffe0b2 !important;
+        color: #ef6c00 !important;
+    }
+
     .table-hover tbody tr:hover {
-        background-color: #bbdefb;
+        background-color: #fff3e0;
     }
 
     .sortable {
@@ -91,6 +142,38 @@
         font-size: 0.9em;
         margin-left: 2px;
     }
+
+    .theme-title {
+        color: #ef6c00 !important;
+    }
+
+    /* --- Custom Scrollbar Styling (theme-matched) --- */
+    .table-responsive,
+    .form-select {
+        scrollbar-width: thin;
+        scrollbar-color: #ffb74d #fff3e0;
+    }
+    .table-responsive::-webkit-scrollbar,
+    .form-select::-webkit-scrollbar {
+        width: 10px;
+        background: #fff3e0;
+        border-radius: 8px;
+    }
+    .table-responsive::-webkit-scrollbar-thumb,
+    .form-select::-webkit-scrollbar-thumb {
+        background: #ffb74d;
+        border-radius: 8px;
+        border: 2px solid #fff3e0;
+    }
+    .table-responsive::-webkit-scrollbar-thumb:hover,
+    .form-select::-webkit-scrollbar-thumb:hover {
+        background: #ef6c00;
+    }
+    select.form-select option:hover,
+    select.form-select option:checked {
+        background: #ffe0b2 !important;
+        color: #ef6c00 !important;
+    }
 </style>
 
 <script>
@@ -98,18 +181,46 @@
         const allRowsData = JSON.parse(document.getElementById('prReleasedEnquiryPendingData').textContent);
         const tbody = document.getElementById('lazyTableBody');
         const table = document.getElementById('prReleasedEnquiryPendingTable');
-        let filteredRows = allRowsData;
-        const chunkSize = 50;
+        const purGrpGrpFilter = document.getElementById('purGrpGrpFilter');
+        const shopFilter = document.getElementById('shopFilter');
+        const prDateFilter = document.getElementById('prDateFilter');
+        const enqDateFilter = document.getElementById('enqDateFilter');
         let currentIndex = 0;
+        const chunkSize = 50;
         let sortColumn = "pur_grp_grp";
         let sortAsc = true;
+        let filteredRows = allRowsData;
 
         function compare(a, b, col, asc) {
-            if (typeof a[col] === "string") {
-                return asc ? a[col].localeCompare(b[col]) : b[col].localeCompare(a[col]);
-            } else {
+            // Force numeric sort for pr_value
+            if (col === "pr_value") {
+                const aNum = Number(a[col]);
+                const bNum = Number(b[col]);
+                return asc ? aNum - bNum : bNum - aNum;
+            }
+            // Numeric
+            if (typeof a[col] === "number" && typeof b[col] === "number") {
                 return asc ? a[col] - b[col] : b[col] - a[col];
             }
+            // Date
+            if (!isNaN(Date.parse(a[col])) && !isNaN(Date.parse(b[col]))) {
+                return asc ? new Date(a[col]) - new Date(b[col]) : new Date(b[col]) - new Date(a[col]);
+            }
+            // String
+            return asc ? String(a[col]).localeCompare(String(b[col])) : String(b[col]).localeCompare(String(a[col]));
+        }
+
+        function filterRows() {
+            const purGrpGrp = purGrpGrpFilter.value;
+            const shop = shopFilter.value;
+            const prFy = prDateFilter.value;
+            const enqFy = enqDateFilter.value;
+            return allRowsData.filter(row =>
+                (purGrpGrp === "all" || row.pur_grp_grp === purGrpGrp) &&
+                (shop === "all" || row.shop === shop) &&
+                (prFy === "all" || row.fy_pr === prFy) &&
+                (enqFy === "all" || row.fy_enq === enqFy)
+            );
         }
 
         function renderChunk() {
@@ -118,9 +229,14 @@
             chunk.forEach(row => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-      <td>${row.pur_grp_grp}</td>
-      <td class="text-end">${row.pr_value.toFixed(2)}</td>
-    `;
+                    <td>${row.pur_grp_grp}</td>
+                    <td>${row.shop}</td>
+                    <td>${row.fund_center}</td>
+                    <td>${row.sug_mod_tend}</td>
+                    <td class="wide-col">${row.pr_date}</td>
+                    <td class="wide-col">${row.enq_date}</td>
+                    <td class="text-end">${Number(row.pr_value).toFixed(2)}</td>
+                    `;
                 fragment.appendChild(tr);
             });
             tbody.appendChild(fragment);
@@ -130,12 +246,11 @@
         function resetAndRender() {
             tbody.innerHTML = '';
             currentIndex = 0;
-            filteredRows = allRowsData.slice();
-            filteredRows.sort((a, b) => compare(a, b, sortColumn, sortAsc));
+            filteredRows = filterRows().sort((a, b) => compare(a, b, sortColumn, sortAsc));
             renderChunk();
         }
 
-        // Sorting
+        // Sorting logic
         table.querySelectorAll('.sortable').forEach(th => {
             th.addEventListener('click', function () {
                 const col = th.getAttribute('data-sort');
@@ -150,6 +265,11 @@
                 th.querySelector('.sort-indicator').textContent = sortAsc ? '▲' : '▼';
                 resetAndRender();
             });
+        });
+
+        // Filter event listeners
+        [purGrpGrpFilter, shopFilter, prDateFilter, enqDateFilter].forEach(filter => {
+            filter.addEventListener('change', resetAndRender);
         });
 
         // Initial sort indicator

@@ -133,3 +133,39 @@ class PendPoStatusLive(models.Model):
     class Meta:
         managed = False
         db_table = 'pend_po_status_live'
+
+
+class InventorySheet1(models.Model):
+    mat_no = models.CharField(max_length=50, db_column='MAT_NO', primary_key=True)
+    mat_dsc = models.TextField(db_column='MAT_DSC', null=True, blank=True)
+    val_price = models.FloatField(db_column='VAL_PRICE', null=True, blank=True)
+
+    class Meta:
+        managed = False
+        db_table = 'inventory_sheet1'
+
+class InventorySheet2(models.Model):
+    mat_no = models.CharField(max_length=50, db_column='MAT_NO', primary_key=True)
+    mat_dsc = models.TextField(db_column='MAT_DSC', null=True, blank=True)
+    val_price = models.FloatField(db_column='VAL_PRICE', null=True, blank=True)
+
+    class Meta:
+        managed = False
+        db_table = 'inventory_sheet2'
+
+class InventorySheet3(models.Model):
+    mat_no = models.CharField(max_length=50, db_column='MAT_NO', primary_key=True)
+    mat_dsc = models.TextField(db_column='MAT_DSC', null=True, blank=True)
+    val_price = models.FloatField(db_column='VAL_PRICE', null=True, blank=True)
+
+    class Meta:
+        managed = False
+        db_table = 'inventory_sheet3'
+
+class StockErp(models.Model):
+    mill = models.CharField(max_length=10, db_column='MILL')
+    stock = models.FloatField(db_column='STOCK')
+
+    class Meta:
+        managed = False
+        db_table = 'stock_erp'
