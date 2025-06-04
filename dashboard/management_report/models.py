@@ -135,7 +135,6 @@ class PendPoStatusLive(models.Model):
         db_table = 'pend_po_status_live'
 
 
-<<<<<<< HEAD
 class EnqPoPendingLive(models.Model):
     pr_no = models.CharField(max_length=50, primary_key=True)
     pr_date = models.DateField(null=True, blank=True)
@@ -164,7 +163,6 @@ class EnqPoPendingLive(models.Model):
     class Meta:
         managed = False  # Set to False if this is a DB view or legacy table
         db_table = 'pr_enq_status_live'  # Use your actual DB table/view name
-=======
 class InventorySheet1(models.Model):
     mat_no = models.CharField(max_length=50, db_column='MAT_NO', primary_key=True)
     mat_dsc = models.TextField(db_column='MAT_DSC', null=True, blank=True)
@@ -199,4 +197,3 @@ class StockErp(models.Model):
     class Meta:
         managed = False
         db_table = 'stock_erp'
->>>>>>> 393cef1f83b911e7a277262df86cdedf4ac8a9f4

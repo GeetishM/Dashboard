@@ -1,10 +1,6 @@
 from django.shortcuts import render
-<<<<<<< HEAD
-from .models import BudgetData, BudgetDataOther, PrRelPendLive, PrEnqStatusLive, PendPoStatusLive, EnqPoPendingLive
-=======
-from .models import BudgetData, BudgetDataOther, InventorySheet1, InventorySheet2, InventorySheet3,StockErp, PrRelPendLive, PrEnqStatusLive, PendPoStatusLive
+from .models import BudgetData, BudgetDataOther, InventorySheet1, InventorySheet2, InventorySheet3,StockErp, PrRelPendLive, PrEnqStatusLive, PendPoStatusLive,  EnqPoPendingLive
 import pandas as pd
->>>>>>> 393cef1f83b911e7a277262df86cdedf4ac8a9f4
 from datetime import date
 
 def home(request):
