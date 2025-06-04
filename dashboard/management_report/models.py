@@ -133,3 +133,67 @@ class PendPoStatusLive(models.Model):
     class Meta:
         managed = False
         db_table = 'pend_po_status_live'
+
+
+class EnqPoPendingLive(models.Model):
+    pr_no = models.CharField(max_length=50, primary_key=True)
+    pr_date = models.DateField(null=True, blank=True)
+    pur_grp = models.CharField(max_length=50, null=True, blank=True)
+    pur_grp_grp = models.CharField(max_length=100, null=True, blank=True)
+    plant = models.CharField(max_length=50, null=True, blank=True)
+    line_item = models.CharField(max_length=20, null=True, blank=True)
+    mat_code = models.CharField(max_length=50, null=True, blank=True)
+    mat_desc = models.TextField(null=True, blank=True)
+    mat_grp = models.CharField(max_length=50, null=True, blank=True)
+    fnl_rel_date = models.DateField(null=True, blank=True)
+    enq_no = models.CharField(max_length=50, null=True, blank=True)
+    enq_date = models.DateField(null=True, blank=True)
+    enq_pend_days = models.IntegerField(null=True, blank=True)
+    po_pend_days = models.IntegerField(null=True, blank=True)
+    enq_mode = models.CharField(max_length=50, null=True, blank=True)
+    pur_officer = models.CharField(max_length=100, null=True, blank=True)
+    ins_date = models.DateField(null=True, blank=True)
+    cfn = models.CharField(max_length=50, null=True, blank=True)
+    pr_text = models.TextField(null=True, blank=True)
+    pr_value = models.FloatField(null=True, blank=True)
+    sug_mod_tend = models.CharField(max_length=100, null=True, blank=True)
+    fund_center = models.CharField(max_length=100, null=True, blank=True)
+    shop = models.CharField(max_length=100, null=True, blank=True)
+
+    class Meta:
+        managed = False  # Set to False if this is a DB view or legacy table
+        db_table = 'pr_enq_status_live'  # Use your actual DB table/view name
+class InventorySheet1(models.Model):
+    mat_no = models.CharField(max_length=50, db_column='MAT_NO', primary_key=True)
+    mat_dsc = models.TextField(db_column='MAT_DSC', null=True, blank=True)
+    val_price = models.FloatField(db_column='VAL_PRICE', null=True, blank=True)
+
+    class Meta:
+        managed = False
+        db_table = 'inventory_sheet1'
+
+class InventorySheet2(models.Model):
+    mat_no = models.CharField(max_length=50, db_column='MAT_NO', primary_key=True)
+    mat_dsc = models.TextField(db_column='MAT_DSC', null=True, blank=True)
+    val_price = models.FloatField(db_column='VAL_PRICE', null=True, blank=True)
+
+    class Meta:
+        managed = False
+        db_table = 'inventory_sheet2'
+
+class InventorySheet3(models.Model):
+    mat_no = models.CharField(max_length=50, db_column='MAT_NO', primary_key=True)
+    mat_dsc = models.TextField(db_column='MAT_DSC', null=True, blank=True)
+    val_price = models.FloatField(db_column='VAL_PRICE', null=True, blank=True)
+
+    class Meta:
+        managed = False
+        db_table = 'inventory_sheet3'
+
+class StockErp(models.Model):
+    mill = models.CharField(max_length=10, db_column='MILL')
+    stock = models.FloatField(db_column='STOCK')
+
+    class Meta:
+        managed = False
+        db_table = 'stock_erp'
