@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import BudgetData, BudgetDataOther, InventorySheet1, InventorySheet2, InventorySheet3,StockErp, PrRelPendLive, PrEnqStatusLive, PendPoStatusLive
+from .models import BudgetData, BudgetDataOther, InventorySheet1, InventorySheet2, InventorySheet3,StockErp, PrRelPendLive, PrEnqStatusLive, PendPoStatusLive,  EnqPoPendingLive
 import pandas as pd
 from datetime import date
 
@@ -162,13 +162,37 @@ def pr_released_enquiry_pending(request):
         'data': data,
         'pur_grp_grp_list': sorted(pur_grp_grp_set),
         'shop_list': sorted(shop_set),
-        'fy_pr_list': sorted(fy_pr_set, reverse=True),
-        'fy_enq_list': sorted(fy_enq_set, reverse=True),
+        'fy_pr_list': sorted(fy_pr_set),
+        'fy_enq_list': sorted(fy_enq_set),
     }
     return render(request, 'management_report/pr_released_enquiry_pending.html', context)
 
 def enquiry_created_po_pending(request):
-    return render(request, 'management_report/enquiry_created_po_pending.html')
+    queryset = EnqPoPendingLive.objects.all().order_by('pur_grp_grp')
+    data = []
+    pur_grp_grp_set = set()
+    fy_enq_set = set()
+
+    for row in queryset:
+        fy_enq = get_fiscal_year(row.enq_date)
+        pur_grp_grp_set.add(row.pur_grp_grp or '')
+        if fy_enq:
+            fy_enq_set.add(fy_enq)
+        data.append({
+            'pur_grp_grp': row.pur_grp_grp or '',
+            'enq_date': row.enq_date.strftime('%Y-%m-%d') if row.enq_date else '',
+            'enq_pend_days': row.enq_pend_days or 0,
+            'po_pend_days': row.po_pend_days or 0,
+            'enq_mode': row.enq_mode or '',
+            'pur_officer': row.pur_officer or '',
+            'fy_enq': fy_enq,
+        })
+    context = {
+        'data': data,
+        'pur_grp_grp_list': sorted(pur_grp_grp_set),
+        'fy_enq_list': sorted(fy_enq_set, reverse=True),
+    }
+    return render(request, 'management_report/enquiry_created_po_pending.html', context)
 
 def po_delivery_pending(request):
     queryset = PendPoStatusLive.objects.all().order_by('pur_grp_grp')
