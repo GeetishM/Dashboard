@@ -94,5 +94,6 @@ python manage.py runserver
 This project is made possible by the efforts of:
 - [Geetish Mahato](https://github.com/GeetishM)
 - [Anamika Dey](https://github.com/anamikadey099)
-- [Pragya Kumar](https://github.com/Pragya-Kumar) 
-\n Thanks to all contributors who helped shape this dashboard.
+- [Pragya Kumar](https://github.com/Pragya-Kumar)
+
+Thanks to all contributors who helped shape this dashboard.
