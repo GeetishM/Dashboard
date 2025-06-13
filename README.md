@@ -1,6 +1,6 @@
 # Material Management Dashboard
 
-A robust web-based **Material Management Dashboard** built with **Django** and powered by **MySQL**, designed to manage and analyze over **300,000+ records**. It offers clean and intuitive charts, graphs, and insights through real-time data visualization using `Chart.js`, `Bootstrap`, and core frontend tools.
+A robust web-based **Material Management Dashboard** built with **Django** and powered by **MySQL**, designed to  to assist procurement officers, material managers, and executives in managing and analyzing over **300,000+ records**. It offers clean and intuitive charts, graphs, and insights through real-time data visualization using `Chart.js`, `Bootstrap`, and core frontend tools.
 
 This dashboard provides efficient material tracking, stock trends, category distribution, and usage insights through powerful backend logic and frontend visualization.
 
@@ -29,11 +29,10 @@ This dashboard provides efficient material tracking, stock trends, category dist
 
 ## Data Insights & Analysis
 
-The system performs backend-level data aggregation, trend analysis, and presents them via:
+The system performs backend-level data aggregation and trend analysis, with interactive charts and tables that respond to filter selections across various datasets, presented through:
 
 - Bar charts for stock usage trends
 - Pie charts for material distribution
-- Line graphs for temporal usage patterns
 - Dashboard widgets for real-time metrics
 
 ---
@@ -83,12 +82,24 @@ DB_PORT=3306
 
 5. **Apply Migrations & Run Server**
 ```
-python manage.py makemigrations
+python manage.py make migrations   #Ensure the MySQL database named your_database_name is created before applying migrations
 python manage.py migrate
+python manage.py load_datasets    #Custom command to load the Excel datasets into your MySQL database
 python manage.py runserver
 ```
 
 ---
+
+## License & Acknowledgment
+
+This project was developed as part of a **Vocational Training Program** at **Bhilai Steel Plant (BSP)**, under the mentorship and guidance of the C&IT Department.
+
+All work, including data visualization, backend logic, and dashboard design, was carried out exclusively for educational and internal demonstration purposes.
+
+Ownership of project objectives, data, and direction remains with BSP. This repository serves as a **non-commercial academic showcase** and is not intended for public or production deployment.
+
+Please do not reuse or distribute this project for commercial or sensitive applications without prior written permission from the respective authorities at BSP.
+
 
 ## Credits & Collaborators
 This project is made possible by the efforts of:
