@@ -92,7 +92,7 @@ python manage.py runserver
 
 ## Credits & Collaborators
 This project is made possible by the efforts of:
-- [Geetish Mahato](https://github.com/GeetishM)
+- [Geetish Mahato](https://github.com/GeetishM) (That is me 😊)
 - [Anamika Dey](https://github.com/anamikadey099)
 - [Pragya Kumar](https://github.com/Pragya-Kumar)
 
