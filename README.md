@@ -92,6 +92,6 @@ python manage.py runserver
 
 ## Credits & Collaborators
 This project is made possible by the efforts of:
-- [@AnamikaDey](https://github.com/AnamikaDey)
-- [@PragyaKumar](https://github.com/PragyaKumar) 
+- [@AnamikaDey](https://github.com/anamikadey099)
+- [@PragyaKumar](https://github.com/Pragya-Kumar) 
 Thanks to all contributors who helped shape this dashboard.
